@@ -9,5 +9,9 @@ type Container struct {
 	data      T
 }
 
+func (c Container) Value() T {
+	return c.data
+}
+
 // type  []T
 type Compartor func(a, b interface{}) int
