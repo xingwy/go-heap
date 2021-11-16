@@ -14,4 +14,4 @@ func (c Container) Value() T {
 }
 
 // type  []T
-type Compartor func(a, b interface{}) int
+type Compartor func(a, b T) int

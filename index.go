@@ -19,17 +19,17 @@ func (h GoHeap) Less(i, j int) bool {
 	return h._compartor(h._pool[i].data, h._pool[j].data) < 0
 }
 
-func NewHeap(c Compartor) *GoHeap {
-	return &GoHeap{_pool: make([]*Container, 0), _compartor: c}
+func NewHeap(c Compartor) GoHeap {
+	return GoHeap{_pool: make([]*Container, 0), _compartor: c}
 }
 
-func CreateHeap(c Compartor, data []T) *GoHeap {
+func CreateHeap(c Compartor, data []T) GoHeap {
 	if len(data) > 0 {
 		_pool := make([]*Container, len(data))
 		for i := 0; i < len(data); i++ {
 			_pool[i] = &Container{__pointer: i, data: data[i]}
 		}
-		h := &GoHeap{_pool: _pool, _compartor: c}
+		h := GoHeap{_pool: _pool, _compartor: c}
 		sort.Sort(h)
 
 		return h
