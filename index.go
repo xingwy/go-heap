@@ -42,14 +42,15 @@ func (h *GoHeap) Pop() *Container {
 	if h.Len() <= 0 {
 		return nil
 	}
-
 	// 调整堆
 	r := h._pool[0]
 	v := h._pool[h.Len()-1]
 	h._pool = h._pool[:h.Len()-1]
 
 	// 调整堆
-	h.shiftdown(0, v)
+	if h.Len() > 0 {
+		h.shiftdown(0, v)
+	}
 	return r
 }
 
@@ -74,6 +75,7 @@ func (h *GoHeap) Add(v T) {
 	// 使用容器包裹
 	container := &Container{__pointer: h.Len(), data: v}
 	h._pool = append(h._pool, container)
+
 	h.shiftup(h.Len()-1, container)
 }
 
@@ -85,8 +87,8 @@ func (h *GoHeap) GetPool() []*Container {
 // 获取所有数据
 func (h *GoHeap) GetData() []T {
 	list := make([]T, h.Len())
-	for _, v := range h._pool {
-		list = append(list, v)
+	for i, v := range h._pool {
+		list[i] = v.Value()
 	}
 	return list
 }
@@ -111,14 +113,6 @@ func (h *GoHeap) Remove(c Container) {
 	}
 }
 
-// /**
-//  * 更新数据
-//  * @param v
-//  */
-// func Update(v T) {
-
-// }
-
 /**
  * 比较器
  * @param v 当前值
@@ -131,27 +125,27 @@ func (h *GoHeap) compartor(v T, t T) bool {
 func (h *GoHeap) shiftup(_p int, _c *Container) {
 	// _p 当前节点
 	f := (_p - 1) >> 1
-	var v T
+	var v *Container
 
 	for {
-		if 0 >= _p {
+		if _p <= 0 {
 			break
 		}
 		// 父容器
-		v = h._pool[f].data
-		if h.compartor(_c.data, v) {
+		v = h._pool[f]
+		if !h.compartor(_c.data, v.data) {
 			// 满足堆平衡 退出
 			break
 		}
 
 		// 递归父节点
 		_c.__pointer = _p
-		h._pool[_p].data = v
+		h._pool[_p] = v
 		_p = f
 		f = (_p - 1) >> 1
 	}
 	_c.__pointer = _p
-	h._pool[_p].data = _c.data
+	h._pool[_p] = _c
 }
 
 /**
@@ -182,13 +176,13 @@ func (h *GoHeap) shiftdown(_p int, _c *Container) {
 		}
 		// 迭代
 		v.__pointer = _p
-		h._pool[_p].data = v
+		h._pool[_p] = v
 		_p = l
 		l = (_p << 1) + 1
 		r = l + 1
 	}
 	// 更新目标节点指针
 	_c.__pointer = _p
-	h._pool[_p].data = _c
+	h._pool[_p] = _c
 
 }
